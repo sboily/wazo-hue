@@ -1,0 +1,7 @@
+username:
+password:
+wazo_host:
+hue_host:
+lights:
+  - 1
+  - 2
