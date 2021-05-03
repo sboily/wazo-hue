@@ -8,3 +8,7 @@ Requirements:
 # Configuration
 
 Copy config.yml.sample to config.yml and update it with your configuration.
+
+# Example
+
+Check contribs directory for example to how to change presence by API.
