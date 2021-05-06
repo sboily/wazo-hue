@@ -23,15 +23,28 @@ lights_ids = config['lights']
 class Wazo(object):
 
     def __init__(self, host, username, password):
-        self.auth = Auth(host, username=username, password=password, verify_certificate=False)
-        self.token = self._create_token()
+        self.client_id = 'wazo-hue'
+        self.token = None
         self.cb = None
         self.driver_name = None
 
+        self.auth = Auth(host, username=username, password=password, verify_certificate=False)
+        self.refresh_token = self._create_refresh_token()
         self.ws = Wws(host, token=self.token, verify_certificate=False)
+        self.ws.on('auth_session_expire_soon', self._session_expired)
 
     def _create_token(self):
-        return self.auth.token.new('wazo_user', expiration=3600)['token']
+        self.token = self.auth.token.new('wazo_user', expiration=3600, refresh_token=self.refresh_token, client_id=self.client_id)['token']
+
+    def _session_expired(self, data):
+        self._create_token()
+        self.ws.update_token(self.token)
+
+    def _create_refresh_token(self):
+        token_data = self.auth.token.new('wazo_user', access_type='offline', client_id=self.client_id)
+        self.refresh_token = token_data['refresh_token']
+        self._create_token()
+        return self.refresh_token
 
     def set_driver(self, cb, driver_name):
         self.cb = cb
