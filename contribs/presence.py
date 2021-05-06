@@ -1,4 +1,6 @@
 #!/usr/bin/env python3
+# Copyright 2021 The Wazo Authors  (see the AUTHORS file)
+# SPDX-License-Identifier: GPL-3.0-or-later
 
 import pprint
 
@@ -21,8 +23,7 @@ c = Chatd(host, token=token, verify_certificate=False)
 
 # List presence
 presences = c.user_presences.list()
+pprint.pprint(presences)
 
 # Set presence to away
 c.user_presences.update({"uuid": user_uuid, "state": "away"})
-
-pprint.pprint(presences)
